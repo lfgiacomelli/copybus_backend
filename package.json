@@ -1,0 +1,20 @@
+{
+  "name": "copybus_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "backend",
+    "apirest",
+    "node"
+  ],
+  "author": "Giac Software Development",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
