@@ -146,21 +146,20 @@ export const getCompanyById = async (req, res) => {
         });
     }
 }
-
 export const addCompany = async (req, res) => {
     try {
-        const result = await addCompanyService(req.body);
+        const newCompany = await addCompanyService(req.body, req.file);
+
         return res.status(201).json({
             success: true,
-            data: result,
-            message: "Empresa adicionada ao gestor com sucesso!"
+            data: newCompany,
         });
-    }
-    catch (err) {
-        console.error(err);
+
+    } catch (error) {
+        console.error("Erro ao criar empresa:", error.message);
         return res.status(500).json({
             success: false,
-            message: "Erro ao adicionar empresa ao gestor"
+            message: error.message || "Erro interno ao criar empresa",
         });
     }
 };

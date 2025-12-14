@@ -1,4 +1,4 @@
-import { } from "../services/companyService.js";
+import { getCompanyByIdService, updateCompanyService } from "../services/companyService.js";
 
 export const getCompanyById = async (req, res) => {
     try {

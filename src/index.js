@@ -3,27 +3,25 @@ import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
 
-// Rotas
 import userRoutes from "./routes/userRoutes.js";
 import managerRoutes from "./routes/managerRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import fleetRoutes from "./routes/fleetRoutes.js";
 import driverRoutes from "./routes/driverRoutes.js";
+import vehicleRoutes from "./routes/vehicleRoutes.js";
+
 import authUserRoutes from "./routes/authUserRoutes.js";
 import authManagerRoutes from "./routes/authManagerRoutes.js";
 
-// Load .env antes de tudo
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares globais
 app.use(cors());
 app.use(helmet());
-app.use(express.json({ limit: "1mb" })); // evita payload gigante
+app.use(express.json({ limit: "1mb" }));
 
-// Health Check
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "Copybus API is running 🚍",
@@ -40,6 +38,7 @@ app.use("/api/managers", managerRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/fleets", fleetRoutes);
 app.use("/api/drivers", driverRoutes);
+app.use("/api/vehicles", vehicleRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

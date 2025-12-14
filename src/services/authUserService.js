@@ -5,9 +5,11 @@ import { findUserByEmail } from "../repositories/userRepository.js";
 export const loginService = async (email, senha) => {
   const user = await findUserByEmail(email);
 
+  if (!user) return null;
 
-  const isMatch = await bcrypt.compare(senha, user.usu_senha);
+  const hash = user.usu_senha.replace(/^\$2y/, "$2a");
 
+  const isMatch = await bcrypt.compare(senha, hash);
   if (!isMatch) return null;
 
   const token = jwt.sign(
@@ -16,7 +18,7 @@ export const loginService = async (email, senha) => {
     { expiresIn: process.env.JWT_EXPIRES }
   );
 
-  delete user.usu_senha;
+  const { usu_senha, ...userWithoutPassword } = user;
 
-  return { token, user };
+  return { token, user: userWithoutPassword };
 };

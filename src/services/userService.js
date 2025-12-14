@@ -1,4 +1,6 @@
-import { findUserById, addUser, updateUser } from "../repositories/userRepository.js";
+import { findUserById, getAllUsers, addUser, updateUser, deleteUser } from "../repositories/userRepository.js";
+
+import bcrypt from "bcrypt";
 
 export const getUserByIdService = async (usu_codigo) => {
     const user = await findUserById(usu_codigo);
@@ -17,6 +19,10 @@ export const createUserService = async (data) => {
 
     return await addUser(userData);
 };
+
+export const getAllUsersService = async (emp_codigo) => {
+    return await getAllUsers(emp_codigo);
+}
 
 export const updateUserService = async (usu_codigo, updateData) => {
     return await updateUser(usu_codigo, updateData);

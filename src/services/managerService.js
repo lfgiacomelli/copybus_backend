@@ -1,5 +1,8 @@
+import { findManagerByEmail, getAllManagers, addManager, updateManager, deleteManager, addCompanyRepository, getAllCompanies, getManagerById, updateCompany, verifyEmployeeExists, getCompanyById, deleteCompany } from "../repositories/managerRepository.js";
+
 import bcrypt from "bcrypt";
-import { findManagerByEmail, getAllManagers, addManager, updateManager, deleteManager, addCompany, getAllCompanies, getManagerById, updateCompany, verifyEmployeeExists } from "../repositories/managerRepository.js";
+
+import { supabase } from "../db/supabase.js";
 
 export const getManagerByEmailService = async (ges_email) => {
     return await findManagerByEmail(ges_email);
@@ -49,9 +52,29 @@ export const getCompanyByIdService = async (emp_codigo) => {
     return await getCompanyById(emp_codigo);
 };
 
-export const addCompanyService = async (companyData) => {
-    return await addCompany(companyData);
+export const addCompanyService = async (companyData, file) => {
+    let fileUrl = null;
+
+    if (file) {
+        const filename = `${Date.now()}-${file.originalname}`;
+
+        const { error } = await supabase.storage
+            .from("empresas")
+            .upload(filename, file.buffer, {
+                contentType: file.mimetype,
+                upsert: false,
+            });
+
+        if (error) throw new Error("Erro ao enviar imagem");
+
+        fileUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/empresas/${filename}`;
+    }
+
+    const newCompany = await addCompanyRepository(companyData, fileUrl);
+
+    return newCompany;
 };
+
 
 export const updateCompanyService = async (emp_codigo, updateData) => {
     return await updateCompany(emp_codigo, updateData);

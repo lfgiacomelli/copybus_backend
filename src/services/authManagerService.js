@@ -2,12 +2,16 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { findManagerByEmail } from "../repositories/managerRepository.js";
 
-export const loginService = async (email, senha) => {
-  const manager = await findManagerByEmail(email);
+export const loginService = async (ges_email, senha) => {
+  const manager = await findManagerByEmail(ges_email);
 
-  const isMatch = await bcrypt.compare(senha, manager.ges_senha);
+  if (!manager) return null;
 
-  if (!isMatch) return null; 
+  const hash = manager.ges_senha.replace(/^\$2y/, "$2a");
+
+  const isMatch = await bcrypt.compare(senha, hash);
+
+  if (!isMatch) return null;
 
   const token = jwt.sign(
     { id: manager.ges_codigo, email: manager.ges_email },
@@ -15,7 +19,7 @@ export const loginService = async (email, senha) => {
     { expiresIn: process.env.JWT_EXPIRES }
   );
 
-  delete manager.ges_senha;
+  const { ges_senha, ...managerWithoutPassword } = manager;
 
-  return { token, manager };
+  return { token, manager: managerWithoutPassword };
 };

@@ -1,4 +1,4 @@
-import { getUserByIdService, createUserService, updateUserService, deleteUserService } from "../services/userService.js";
+import { getUserByIdService, createUserService, updateUserService, deleteUserService, getAllUsersService } from "../services/userService.js";
 
 export const getUserByIdController = async (req, res) => {
     try {
@@ -30,6 +30,38 @@ export const getUserByIdController = async (req, res) => {
         });
     }
 };
+
+export const getAllUsersController = async (req, res) => {
+    try {
+        const { emp_codigo } = req.params;
+        if (!emp_codigo) {
+            return res.status(400).json({
+                success: false,
+                message: "Código da empresa é obrigatório."
+            });
+        }
+        const users = await getAllUsersService(emp_codigo);
+
+        if (!users) {
+            return res.status(404).json({
+                success: false,
+                message: "Funcionários não encontrados."
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: users,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: "Erro interno no servidor."
+        });
+    }
+};
+
 export const createUserController = async (req, res) => {
     try {
         const newUser = await createUserService(req.body);
@@ -41,7 +73,6 @@ export const createUserController = async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-
         return res.status(500).json({
             success: false,
             message: "Erro ao criar usuário"
